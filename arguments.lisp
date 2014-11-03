@@ -11,7 +11,7 @@
    #:arglist))
 (in-package #:org.shirakumo.trivial-arguments)
 
-#+:sbcl (require 'sb-introspect)
+#+:sbcl (eval-when (:compile-toplevel :load-toplevel :execute) (require 'sb-introspect))
 #-(or :swank :abcl :allegro :ccl :clisp :ecl :lispworks :sbcl :scl)
 (warn "TRIVIAL-ARGUMENTS NOTICE: SWANK not present and implementation not directly supported. Falling back to FUNCTION-LAMBDA-EXPRESSION.")
 
