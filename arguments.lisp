@@ -12,7 +12,7 @@
 (in-package #:org.shirakumo.trivial-arguments)
 
 #+:sbcl (eval-when (:compile-toplevel :load-toplevel :execute) (require 'sb-introspect))
-#-(or :swank :abcl :allegro :ccl :clisp :ecl :lispworks :sbcl :scl)
+#-(or :swank :abcl :allegro :ccl :clisp :ecl :lispworks :sbcl :scl :clasp)
 (warn "TRIVIAL-ARGUMENTS NOTICE: SWANK not present and implementation not directly supported. Falling back to FUNCTION-LAMBDA-EXPRESSION.")
 
 (defun arglist (function)
@@ -44,7 +44,7 @@
     (or (ignore-errors (ext:arglist function))
         :unknown)
 
-    #+(and :ecl (not :swank))
+    #+(and :ecl (not :swank) (not :clasp))
     (multiple-value-bind (list provided) (ext:function-lambda-list function)
       (if provided list :unknown))
 
@@ -59,6 +59,9 @@
     (multiple-value-bind (list provided) (ext:function-arglist function)
       (if provided list :unknown))
 
-    #-(or :swank :abcl :allegro :ccl :clisp :ecl :lispworks :sbcl :scl)
+    #+(and :clasp (not :swank))
+    (core:function-lambda-list function)
+
+    #-(or :swank :abcl :allegro :ccl :clisp :ecl :lispworks :sbcl :scl :clasp)
     (let ((lambda (function-lambda-expression function)))
       (if lambda (second lambda) :unknown))))
