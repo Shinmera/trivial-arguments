@@ -7,7 +7,7 @@
 (in-package #:cl-user)
 (asdf:defsystem trivial-arguments
   :name "Trivial-Arguments"
-  :version "1.0.0"
+  :version "1.0.1"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
