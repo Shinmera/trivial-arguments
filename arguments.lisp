@@ -18,9 +18,7 @@
 (defun arglist (function)
   "Returns the lambda-list of the function if possible, :unknown otherwise."
   (let ((function (etypecase function
-                    (symbol (fdefinition function))
-                    (list (fdefinition function))
-                    (function function))))
+                    ((or list symbol function) function))))
     #+:swank
     (let ((result (#.(find-symbol "ARGLIST" (cond ((find-package "SWANK-BACKEND") "SWANK-BACKEND")
                                                   ((find-package "SWANK/BACKEND") "SWANK/BACKEND")
@@ -63,5 +61,7 @@
     (core:function-lambda-list function)
 
     #-(or :swank :abcl :allegro :ccl :clisp :ecl :lispworks :sbcl :scl :clasp)
-    (let ((lambda (function-lambda-expression function)))
+    (let ((lambda (function-lambda-expression (etypecase function
+                                                ((or list symbol) (fdefinition function))
+                                                (function function)))))
       (if lambda (second lambda) :unknown))))
