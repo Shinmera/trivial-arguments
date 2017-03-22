@@ -15,4 +15,4 @@
   :homepage "https://github.com/Shinmera/trivial-arguments"
   :serial T
   :components ((:file "arguments"))
-  :depends-on ())
+  :depends-on ((:feature :sbcl (:require :sb-introspect))))
