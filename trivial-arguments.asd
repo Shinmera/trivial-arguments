@@ -7,7 +7,7 @@
 (asdf:defsystem trivial-arguments
   :name "Trivial-Arguments"
   :version "1.1.0"
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A simple library to retrieve the lambda-list of a function."
