@@ -1,5 +1,5 @@
 #|
- This file is a part of Trivial-Indent
+ This file is a part of Trivial-Arguments
  (c) 2014 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
