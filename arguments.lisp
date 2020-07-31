@@ -11,7 +11,7 @@
    #:arglist))
 (in-package #:org.shirakumo.trivial-arguments)
 
-#-(or :abcl :allegro :ccl :clasp :clisp :cmucl :corman :ecl :lispworks :sbcl :scl)
+#-(or :abcl :allegro :ccl :clasp :clisp :cmucl :corman :ecl :lispworks :mezzano :sbcl :scl)
 (warn "TRIVIAL-ARGUMENTS NOTICE: Your implementation is not directly supported. Falling back to FUNCTION-LAMBDA-EXPRESSION.")
 
 (defmacro with-unknown-on-error (&body body)
@@ -73,7 +73,11 @@
     #+:lispworks
     (let ((list (lw:function-lambda-list function)))
       (if (eq list :dont-know) :unknown list))
-    
+
+    #+mezzano
+    (with-unknown-on-error
+      (mezzano.debug:function-lambda-list function))
+
     #+:sbcl
     (sb-introspect:function-lambda-list function)
 
@@ -81,7 +85,7 @@
     (multiple-value-bind (list provided) (ext:function-arglist function)
       (if provided list :unknown))
 
-    #-(or :abcl :allegro :ccl :clasp :clisp :cmucl :corman :ecl :lispworks :sbcl :scl)
+    #-(or :abcl :allegro :ccl :clasp :clisp :cmucl :corman :ecl :lispworks :mezzano :sbcl :scl)
     (let ((lambda (function-lambda-expression (etypecase function
                                                 ((or list symbol) (fdefinition function))
                                                 (function function)))))
