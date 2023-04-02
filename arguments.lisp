@@ -79,7 +79,8 @@
       (mezzano.debug:function-lambda-list function))
 
     #+:sbcl
-    (sb-introspect:function-lambda-list function)
+    (multiple-value-bind (list unknown) (sb-introspect:function-lambda-list function)
+      (if unknown :unknown list))
 
     #+:scl
     (multiple-value-bind (list provided) (ext:function-arglist function)
