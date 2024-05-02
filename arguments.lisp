@@ -2,7 +2,24 @@
   (:use #:cl)
   (:nicknames #:org.shirakumo.trivial-arguments #:arg)
   (:export
-   #:arglist))
+   #:arglist
+   #:argtypes)
+  (:import-from
+   #+abcl      #:mop
+   #+allegro   #:mop
+   #+clisp     #:clos
+   #+clozure   #:ccl
+   #+cmu       #:clos-mop
+   #+ecl       #:clos
+   #+clasp     #:clos
+   #+lispworks #:clos
+   #+mcl       #:ccl
+   #+sbcl      #:sb-mop
+   #+scl       #:clos
+   #+mezzano   #:mezzano.clos
+   #+sicl      #:sicl-clos
+   #:method-generic-function
+   #:method-specializers))
 (in-package #:org.shirakumo.trivial-arguments)
 
 #-(or :abcl :allegro :ccl :clasp :clisp :cmucl :corman :ecl :lispworks :mezzano :sbcl :scl)
@@ -85,3 +102,69 @@
                                                 ((or list symbol) (fdefinition function))
                                                 (function function)))))
       (if lambda (second lambda) :unknown))))
+
+(defun argtypes (function)
+  "Returns the argument types for the function or :unknown.
+Returns return type (or :unknown) as a second value."
+  (let ((function (etypecase function
+                    (symbol
+                     (or (macro-function function)
+                         (symbol-function function)))
+                    ((or function standard-method) function)))
+        (name (nth-value
+               2 (function-lambda-expression
+                  (etypecase function
+                    (symbol
+                     (or (macro-function function)
+                         (symbol-function function)))
+                    (function function)
+                    (standard-method (method-generic-function function)))))))
+    (declare (ignorable name))
+    (or
+     (when (typep function 'standard-method)
+       (values (mapcar (lambda (s)
+                         (typecase s
+                           ((or symbol list) s)
+                           ((or standard-class built-in-class) (class-name s))
+                           (T :unknown)))
+                       (method-specializers function))
+               :unknown))
+     #+sbcl
+     (let ((ftype (sb-introspect:function-type function)))
+       (if ftype
+           (values (second ftype) (or (third ftype) :unknown))
+           (values :unknown :unknown)))
+     #+(or cmucl scl)
+     (let ((ftype (kernel:%function-type function)))
+       (if ftype
+           (values (second ftype) (or (third ftype) :unknown))
+           (values :unknown :unknown)))
+     #+(or ecl gcl)
+     (when name
+       (multiple-value-bind (arg-types arg-types-p)
+           (compiler::get-arg-types name)
+         (multiple-value-bind (return-type return-type-p)
+             (compiler::get-return-type name)
+           (values (if arg-types-p
+                       arg-types
+                       :unknown)
+                   (if return-type-p
+                       return-type
+                       :unknown)))))
+     #+clozure
+     (let ((ftype (ccl::find-ftype-decl (function-name-symbol function) ccl::*nx-lexical-environment*)))
+       (if ftype
+           (values (second ftype) (or (third ftype) :unknown))
+           (values :unknown :unknown)))
+     #+abcl
+     (let ((ftype (sys::proclaimed-ftype (function-name-symbol function))))
+       (if ftype
+           (values (second ftype) (or (third ftype) :unknown))
+           (values :unknown :unknown)))
+     #+allegro
+     (let ((ftype (compiler::declared-ftype-p (function-name-symbol function))))
+       (if ftype
+           (values (second ftype) (or (third ftype) :unknown))
+           (values :unknown :unknown)))
+     #-(or cmucl scl sbcl ecl gcl clozure abcl allegro)
+     nil)))
