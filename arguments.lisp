@@ -167,4 +167,4 @@ Returns return type (or :unknown) as a second value."
            (values (second ftype) (or (third ftype) :unknown))
            (values :unknown :unknown)))
      #-(or cmucl scl sbcl ecl gcl clozure abcl allegro)
-     nil)))
+     (values :unknown :unknown))))
