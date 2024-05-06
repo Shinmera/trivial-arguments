@@ -155,17 +155,17 @@ Returns return type (or :unknown) as a second value."
                        return-type
                        :unknown)))))
      #+clozure
-     (let ((ftype (ccl::find-ftype-decl (function-name-symbol function) ccl::*nx-lexical-environment*)))
+     (let ((ftype (ccl::find-ftype-decl name ccl::*nx-lexical-environment*)))
        (if ftype
            (values (second ftype) (or (third ftype) :unknown))
            (values :unknown :unknown)))
      #+abcl
-     (let ((ftype (sys::proclaimed-ftype (function-name-symbol function))))
+     (let ((ftype (sys::proclaimed-ftype name)))
        (if ftype
            (values (second ftype) (or (third ftype) :unknown))
            (values :unknown :unknown)))
      #+allegro
-     (let ((ftype (compiler::declared-ftype-p (function-name-symbol function))))
+     (let ((ftype (compiler::declared-ftype-p name)))
        (if ftype
            (values (second ftype) (or (third ftype) :unknown))
            (values :unknown :unknown)))
