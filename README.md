@@ -1,14 +1,4 @@
-About Trivial-Arguments
------------------------
-Often times I need to know about the lambda-list of a function for some kind of automatic construction business. Since this is implementation-dependant and SWANK isn't always handy, there's this.
+# This repository has [moved](https://shinmera.com/projects/trivial-arguments)!
+Due to Microsoft's continued enshittification of the platform this repository has been moved to [Codeberg](https://shinmera.com/projects/trivial-arguments) in August of 2025. It will not receive further updates or patches. **Issues and pull requests will not be looked at here either**, please submit your patches and issue tickets on Codeberg, or send them directly via good old email patches to [shirakumo@tymoon.eu](mailto:shirakumo@tymoon.eu).
 
-How To
-------
-Simple:
-
-    (arg:arglist 'gethash)
-    (arg:arglist #'gethash)
-    (arg:arglist '(setf gethash))
-    (arg:arglist #'(lambda (foo) (declare (ignore foo))))
-
-And that's all there is to it. If the lambda-list could not be determined, `:unknown` is returned instead.
+Thanks.
